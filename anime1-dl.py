@@ -93,7 +93,7 @@ def download_episode(URL):
 	File_Type = Video.info()["Content-Type"]
 	
 	if os.path.isfile(__FINAL__NAME__) and os.path.getsize(__FINAL__NAME__) == int(File_Size):
-		print("[anime1-dl] File found and is of same path, skipping")
+		print("[anime1-dl] File found and is of same size, skipping")
 		return
 		
 	File_Size_Text = BytesToPrefix(int(File_Size))
