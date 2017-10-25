@@ -78,7 +78,7 @@ def get_info(URL):
 	TruncatedForVideo = page[v_URL: ]
 	TruncatedForVideo = TruncatedForVideo[ : TruncatedForVideo.find(bytes('"', "utf-8"))]
 	TruncatedForVideo = TruncatedForVideo.replace(bytes(" ", "utf-8"), bytes("%20", "utf-8"))
-	return TruncatedForVideo.decode(), TruncatedForName.decode().replace(":", "")
+	return TruncatedForVideo.decode(), TruncatedForName.decode().replace(":", "").replace("Episode Episode", "Episode")
 		
 def download_episode(URL):
 	print("\n[anime1-dl] Download episode from {}...{}".format(URL[ : URL.find(".com/") + 5], URL[URL.find("/episode-") : ]))
