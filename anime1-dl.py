@@ -122,7 +122,7 @@ def download_episode(URL):
 		if Avg_Time == 0:
 			Avg_Time = 1
 		
-		Status_Text = "[anime1-dl] {:9s}/{:9s} [{:7.3f}%] Speed = {:10s}".format(
+		Status_Text = "[anime1-dl] {:9s}/{:9s} [{:7.3f}%] Speed = {:10s}/s".format(
 			BytesToPrefix(int(Downloaded)), File_Size_Text, int(Downloaded) * 100 / int(File_Size), BytesToPrefix(len(Buffer) / Avg_Time))
 		print("{}  ".format(Status_Text), end="\r")
 		
