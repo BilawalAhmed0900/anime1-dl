@@ -7,5 +7,6 @@ USAGE
 ===========================
 	python anime1-dl [Link to series or episode]
 
-Works on Python 3.x
-If you want to port in to Python 2.x, PM me
+Works on Python 3.x.
+Feel free to port to Python 2.x.
+Won't be doing it any time soon.
