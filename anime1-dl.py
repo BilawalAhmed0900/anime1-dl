@@ -55,7 +55,7 @@ def download_series(url):
 		EndOfEpisodes = TruncatedForEpisode.find(bytes("</ul>", "utf-8"))
 		TruncatedForEpisode = TruncatedForEpisode[ : EndOfEpisodes]
 	
-	URLs = re.findall(bytes("http://www.anime1.com/watch/[a-zA-Z0-9-]+/episode-[0-9]{1,4}", "utf-8"), TruncatedForEpisode)
+	URLs = re.findall(bytes("http://www.anime1.com/watch/[a-zA-Z0-9-]+/[a-z-]+-[0-9-]{1,8}", "utf-8"), TruncatedForEpisode)
 	
 	print("\n[anime1-dl] Name: {}".format(Name))
 	print("[anime1-dl] Episodes Found: {}".format(len(URLs)))
@@ -91,14 +91,14 @@ def download_episode(URL):
 	Video = urllib.request.urlopen(__FINAL__URL__)
 	File_Size = Video.info()["Content-Length"]
 	File_Type = Video.info()["Content-Type"]
+	__FINAL__NAME__ = __FINAL__NAME__ + "." + File_Type[File_Type.find("/") + 1 : ]
 	
 	if os.path.isfile(__FINAL__NAME__) and os.path.getsize(__FINAL__NAME__) == int(File_Size):
 		print("[anime1-dl] File found and is of same size, skipping")
 		return
 		
 	File_Size_Text = BytesToPrefix(int(File_Size))
-		
-	f_Video = open(__FINAL__NAME__ + "." + File_Type[File_Type.find("/") + 1 : ], "wb")
+	f_Video = open(__FINAL__NAME__, "wb")
 	print("\n[anime1-dl] Destination: {}\n[anime1-dl] Type: {}".format(__FINAL__NAME__, File_Type))
 	
 	Downloaded = 0
@@ -127,6 +127,7 @@ def download_episode(URL):
 		print("{}  ".format(Status_Text), end="\r")
 		
 	f_Video.close()
+	print()
 		
 def BytesToPrefix(Size):
 	Prefix_N = 0
