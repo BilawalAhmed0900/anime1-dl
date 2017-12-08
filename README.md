@@ -7,7 +7,7 @@ USAGE
 ===========================
 	python anime1-dl [Link to series or episode]
 
-Works on Python **3.x** *and* **2.x**.
+Works on Python **3.x** *and* **2.7.x**.
 
 **INSTALLATION**
 ====================
