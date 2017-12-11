@@ -11,6 +11,11 @@ import re
 import os.path
 import datetime
 
+if os.name == "nt":
+    path_delim = "\\"
+elif os.name == "posix":
+    path_delim = "/"
+
 def main():
 	print("anime1-dl made by Dragneel1234", end="\n\n")
 	if len(sys.argv) == 1:
@@ -28,7 +33,7 @@ def main():
 			download_series(sys.argv[1])
 		else:
 			print("[anime1.dl] A possible episode link detected")
-			download_episode(sys.argv[1])
+			download_episode(sys.argv[1], "")
 
 def download_series(url):
 	__VALID_URL__ = r"http://www.anime1.com/watch/*/"
@@ -68,7 +73,7 @@ def download_series(url):
 	print("[anime1-dl] Episodes Found: {}".format(len(URLs)))
 
 	for url in URLs:
-		download_episode(url.decode())
+		download_episode(url.decode(), Name)
 
 def get_info(URL):
 	print("[anime1-dl] Download webpage")
@@ -93,44 +98,47 @@ def get_info(URL):
 	TruncatedForVideo = TruncatedForVideo.replace(b" ", b"%20")
 	return TruncatedForVideo.decode(), TruncatedForName.decode().replace(":", "").replace("Episode Episode", "Episode")
 
-def download_episode(URL):
-	print("\n[anime1-dl] Download episode from {}...{}".format(URL[ : URL.find(".com/") + 5], URL[URL.find("/episode-") : ]))
-	print("[anime1-dl] Getting Info on the Episode")
-	__FINAL__URL__, __FINAL__NAME__ = get_info(URL)
-	if __FINAL__URL__ is "" or __FINAL__NAME__ is "":
-		print("[anime1-dl] Video not Found")
-		return
+def download_episode(URL, Name):
+    print("\n[anime1-dl] Download episode from {}...{}".format(URL[ : URL.find(".com/") + 5], URL[URL.find("/episode-") : ]))
+    print("[anime1-dl] Getting Info on the Episode")
+    __FINAL__URL__, __FINAL__NAME__ = get_info(URL)
+    if __FINAL__URL__ is "" or __FINAL__NAME__ is "":
+        print("[anime1-dl] Video not Found")
+        return
+        
+    if Name != "" and not os.path.exists(Name):
+        os.makedirs(Name)
+    
+    Video = urlopen(__FINAL__URL__)
+    File_Size = Video.info()["Content-Length"]
+    File_Type = Video.info()["Content-Type"]
+    __FINAL__NAME__ = Name + path_delim + __FINAL__NAME__ + "." + File_Type[File_Type.find("/") + 1 : ]
+   
+    if os.path.isfile(__FINAL__NAME__) and os.path.getsize(__FINAL__NAME__) == int(File_Size):
+        print("[anime1-dl] File found and is of same size, skipping")
+        return
 
-	Video = urlopen(__FINAL__URL__)
-	File_Size = Video.info()["Content-Length"]
-	File_Type = Video.info()["Content-Type"]
-	__FINAL__NAME__ = __FINAL__NAME__ + "." + File_Type[File_Type.find("/") + 1 : ]
+    File_Size_Text = BytesToPrefix(int(File_Size))
+    f_Video = open(__FINAL__NAME__, "wb")
+    print("\n[anime1-dl] Destination: {}\n[anime1-dl] Type: {}".format(__FINAL__NAME__[__FINAL__NAME__.find(path_delim) + 1 : ], File_Type))
+    
+    Downloaded = 0
+    BlockSize = 8192
 
-	if os.path.isfile(__FINAL__NAME__) and os.path.getsize(__FINAL__NAME__) == int(File_Size):
-		print("[anime1-dl] File found and is of same size, skipping")
-		return
+    while True:
+        Buffer = Video.read(BlockSize)
+        if not Buffer:
+            break
 
-	File_Size_Text = BytesToPrefix(int(File_Size))
-	f_Video = open(__FINAL__NAME__, "wb")
-	print("\n[anime1-dl] Destination: {}\n[anime1-dl] Type: {}".format(__FINAL__NAME__, File_Type))
+        Downloaded += len(Buffer)
+        f_Video.write(Buffer)
 
-	Downloaded = 0
-	BlockSize = 8192
+        Status_Text = "[anime1-dl] {:9s}/{:9s} [{:7.3f}%]".format(
+            BytesToPrefix(int(Downloaded)), File_Size_Text, int(Downloaded) * 100 / int(File_Size))
+        print("{}  ".format(Status_Text), end="\r")
 
-	while True:
-		Buffer = Video.read(BlockSize)
-		if not Buffer:
-			break
-
-		Downloaded += len(Buffer)
-		f_Video.write(Buffer)
-
-		Status_Text = "[anime1-dl] {:9s}/{:9s} [{:7.3f}%]".format(
-			BytesToPrefix(int(Downloaded)), File_Size_Text, int(Downloaded) * 100 / int(File_Size))
-		print("{}  ".format(Status_Text), end="\r")
-
-	f_Video.close()
-	print()
+    f_Video.close()
+    print()
 
 def BytesToPrefix(Size):
 	Prefix_N = 0
