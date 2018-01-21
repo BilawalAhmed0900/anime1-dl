@@ -98,7 +98,8 @@ def get_info(URL):
 	TruncatedForVideo = TruncatedForVideo.replace(b" ", b"%20")
 	return TruncatedForVideo.decode(), TruncatedForName.decode().replace(":", "").replace("Episode Episode", "Episode")
 
-def download_episode(URL, Name):
+def download_episode(URL, tName):
+    Name = tName.replace(":", "")
     print("\n[anime1-dl] Download episode from {}...{}".format(URL[ : URL.find(".com/") + 5], URL[URL.find("/episode-") : ]))
     print("[anime1-dl] Getting Info on the Episode")
     __FINAL__URL__, __FINAL__NAME__ = get_info(URL)
